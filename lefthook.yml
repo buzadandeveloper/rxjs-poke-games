@@ -1,0 +1,13 @@
+pre-commit:
+  parallel: true
+  commands:
+    lint-staged:
+      run: bunx lint-staged
+    tsc:
+      glob: 'src/**/*.{ts,tsx}'
+      run: bun typecheck
+
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm commitlint --edit {1}
