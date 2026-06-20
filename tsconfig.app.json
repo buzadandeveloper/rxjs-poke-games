@@ -21,6 +21,20 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
+    /* Path aliases */
+    "paths": {
+      "#app/*": ["./src/app/*"],
+      "#layouts": ["./src/layouts/index"],
+      "#lib/*": ["./src/lib/*"],
+      "#utils": ["./src/utils/index"],
+      "#pages": ["./src/pages/index"],
+      "#services/*": ["./src/services/*"],
+      "#services": ["./src/services/index"],
+      "#stores/*=": ["./src/stores/*"],
+      "#stores": ["./src/stores/index"],
+      "#types": ["./src/types/index"]
+    },
+
     "types": ["vite/client"]
   },
   "include": ["src"]
