@@ -1,10 +1,10 @@
 <p align="center">
   <a href="https://react.dev">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" alt="React Logo" width="55" />
+    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" alt="React Logo" width="60" />
   </a>
-  <span style="margin: 0 20px;"></span>
+  <span style="margin: 0 25px;"></span>
   <a href="https://rxjs.dev/">
-    <img src="https://rxjs.dev/generated/images/marketing/home/Rx_Logo-512-512.png" alt="RxJS Logo" width="50" />
+    <img src="https://rxjs.dev/generated/images/marketing/home/Rx_Logo-512-512.png" alt="RxJS Logo" width="55" />
   </a>
 </p>
 
