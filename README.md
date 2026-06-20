@@ -2,7 +2,7 @@
   <a href="https://react.dev">
     <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" alt="React Logo" width="55" />
   </a>
-  <span style="font-size: 32px; font-weight: bold; margin: 0 12px;">+</span>
+  <span style="font-size: 32px; font-weight: bold; margin: 0 12px;"></span>
   <a href="https://rxjs.dev/">
     <img src="https://rxjs.dev/generated/images/marketing/home/Rx_Logo-512-512.png" alt="RxJS Logo" width="50" />
   </a>
