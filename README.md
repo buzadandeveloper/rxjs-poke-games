@@ -22,6 +22,10 @@ This project is created to learn:
 - How to compose operators for powerful reactive logic
 - State management with observables in React
 
+## Data Source
+
+This project uses the **[PokéAPI](https://pokeapi.co/)** to fetch Pokémon data. It's a free, open-source API that provides comprehensive Pokémon information.
+
 ## Quick Start
 
 ### Prerequisites
