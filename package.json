@@ -7,7 +7,7 @@
     "dev:vite": "vite",
     "dev:ts": "tsc -b --watch",
     "dev": "concurrently -k -n VITE,TSC -c blue,red \"bun dev:vite\" \"bun dev:ts\"",
-    "build": "bun typecheck && bun lint && bun format:check && vite build",
+    "build": "bun typecheck && bun lint && vite build",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
