@@ -1,5 +1,3 @@
-#
-
 <div style="display: flex; align-items: center; justify-content: center">
   <a href="https://react.dev">
     <img
