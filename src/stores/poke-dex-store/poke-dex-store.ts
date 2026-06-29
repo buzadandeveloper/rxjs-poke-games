@@ -31,55 +31,55 @@ class PokeDexStore {
 
   #pokemonsCache = new Map<number, Pokemon>();
 
-  pokemons$: Observable<PokemonsState> = this.#params$
-    .pipe(
-      switchMap((params) =>
-        pokeService.getPokemons(params).pipe(
-          switchMap(({ response }) => {
-            const requests = response.results.map((pokemon) =>
-              pokeService
-                .getPokemon(pokemon.name)
-                .pipe(map(({ response }) => this.#mapPokemon(response))),
-            );
+  #pokemonsData$: Observable<PokemonsState> = this.#params$.pipe(
+    switchMap((params) =>
+      pokeService.getPokemons(params).pipe(
+        switchMap(({ response }) => {
+          const requests = response.results.map((pokemon) =>
+            pokeService
+              .getPokemon(pokemon.name)
+              .pipe(map(({ response }) => this.#mapPokemon(response))),
+          );
 
-            return forkJoin(requests).pipe(
-              map((response) =>
-                response.map((pokemon) => this.#pokemonsCache.set(pokemon.id, pokemon)),
-              ),
-            );
-          }),
-          map(() => ({
-            status: RESPONSE_STATUS.success,
-            reachedMaxPokemons: this.#pokemonsCache.size === MAX_REACHABLE_POKEMONS,
-            results: Array.from(this.#pokemonsCache.values()),
-          })),
-          startWith({
-            status: this.#pokemonsCache.size ? RESPONSE_STATUS.pending : RESPONSE_STATUS.loading,
+          return forkJoin(requests).pipe(
+            map((response) =>
+              response.map((pokemon) => this.#pokemonsCache.set(pokemon.id, pokemon)),
+            ),
+          );
+        }),
+        map(() => ({
+          status: RESPONSE_STATUS.success,
+          reachedMaxPokemons: this.#pokemonsCache.size === MAX_REACHABLE_POKEMONS,
+          results: Array.from(this.#pokemonsCache.values()),
+        })),
+        startWith({
+          status: this.#pokemonsCache.size ? RESPONSE_STATUS.pending : RESPONSE_STATUS.loading,
+          reachedMaxPokemons: false,
+          results: Array.from(this.#pokemonsCache.values()),
+        }),
+        catchError((error) =>
+          of({
+            status: RESPONSE_STATUS.error,
             reachedMaxPokemons: false,
-            results: Array.from(this.#pokemonsCache.values()),
+            results: [],
+            error,
           }),
-          catchError((error) =>
-            of({
-              status: RESPONSE_STATUS.error,
-              reachedMaxPokemons: false,
-              results: [],
-              error,
-            }),
-          ),
         ),
       ),
-      shareReplay(1),
-    )
-    .pipe(
-      combineLatestWith(this.#selectedPokemon$),
-      map(([pokemonsState, selectedPokemon]) => ({
-        ...pokemonsState,
-        results: pokemonsState.results.map((pokemon) => ({
-          ...pokemon,
-          isSelected: pokemon.id === selectedPokemon,
-        })),
+    ),
+    shareReplay(1),
+  );
+
+  pokemons$ = this.#pokemonsData$.pipe(
+    combineLatestWith(this.#selectedPokemon$),
+    map(([pokemonsState, selectedPokemon]) => ({
+      ...pokemonsState,
+      results: pokemonsState.results.map((pokemon) => ({
+        ...pokemon,
+        isSelected: pokemon.id === selectedPokemon,
       })),
-    );
+    })),
+  );
 
   #mapPokemon(response: PokemonData) {
     return {
