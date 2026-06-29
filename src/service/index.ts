@@ -1,7 +1,7 @@
 import { apiClient } from '#lib/api-client';
-import type { PokemonData, PokemonsData, PokemonsParams } from './poke-dex-service-types';
+import type { PokemonData, PokemonsData, PokemonsParams } from './types';
 
-class PokeDexService {
+class PokeService {
   getPokemons(queryParams: PokemonsParams) {
     return apiClient.get<PokemonsData>('pokemon', queryParams);
   }
@@ -11,4 +11,4 @@ class PokeDexService {
   }
 }
 
-export const pokeService = new PokeDexService();
+export const pokeService = new PokeService();

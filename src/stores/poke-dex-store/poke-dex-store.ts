@@ -1,4 +1,4 @@
-import { pokeService } from '#services';
+import { pokeService } from '#service';
 import {
   BehaviorSubject,
   catchError,
@@ -11,11 +11,7 @@ import {
   startWith,
   switchMap,
 } from 'rxjs';
-import type {
-  PokemonData,
-  PokemonsParams,
-  PokemonStatName,
-} from '#services/poke-dex-service/poke-dex-service-types';
+import type { PokemonData, PokemonsParams, PokemonStatName } from '#service/types';
 import type { Pokemon, PokemonsState } from './poke-dex-store-types';
 import { RESPONSE_STATUS } from '#types';
 
@@ -85,7 +81,7 @@ class PokeDexStore {
     return {
       id: response.id,
       name: response.name,
-      src: response.sprites.front_default,
+      src: response.sprites.other.home.front_default,
       stats: response.stats.reduce(
         (acc, stat) => ({
           ...acc,

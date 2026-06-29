@@ -1,5 +1,5 @@
 import type { Pokemon } from '#stores/poke-dex-store/poke-dex-store-types.ts';
-import type { PokemonStatName } from '#services/poke-dex-service/poke-dex-service-types';
+import type { PokemonStatName } from '#service/types';
 import { pokeDexStore } from '#stores';
 import { PokeDexFigure } from './poke-dex-figure';
 import { PokeDexName } from './poke-dex-name';

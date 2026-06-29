@@ -1,4 +1,4 @@
-import type { PokemonStatName } from '#services/poke-dex-service/poke-dex-service-types';
+import type { PokemonStatName } from '#service/types';
 import type { ResponseStatus } from '#types';
 
 type PokemonStats = Record<PokemonStatName, number>;

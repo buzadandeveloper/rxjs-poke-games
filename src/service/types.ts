@@ -16,7 +16,11 @@ export type PokemonsData = {
 };
 
 type PokemonSprites = {
-  front_default: string;
+  other: {
+    home: {
+      front_default: string;
+    };
+  };
 };
 
 export type PokemonStatName =

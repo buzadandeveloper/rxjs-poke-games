@@ -64,8 +64,8 @@
     "#lib/*": "./src/lib/*",
     "#utils": "./src/utils/index",
     "#pages": "./src/pages/index",
-    "#services/*": "./src/services/*",
-    "#services": "./src/services/index",
+    "#service/*": "./src/service/*",
+    "#service": "./src/service/index",
     "#stores/*": "./src/stores/*",
     "#stores": "./src/stores/index",
     "#types": "./src/types/index.ts"
