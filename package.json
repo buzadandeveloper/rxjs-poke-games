@@ -63,7 +63,7 @@
   "imports": {
     "#app/*": "./src/app/*",
     "#layouts": "./src/layouts/index",
-    "#lib/*": "./src/lib/*",
+    "#lib": "./src/lib/index",
     "#utils": "./src/utils/index",
     "#pages": "./src/pages/index",
     "#service/*": "./src/service/*",
