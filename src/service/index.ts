@@ -1,4 +1,4 @@
-import { apiClient } from '#lib/api-client';
+import { apiClient } from '#lib';
 import type { PokemonData, PokemonsData, PokemonsParams } from './types';
 
 class PokeService {
