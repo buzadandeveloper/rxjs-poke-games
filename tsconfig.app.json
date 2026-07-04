@@ -24,6 +24,7 @@
     /* Path aliases */
     "paths": {
       "#app/*": ["./src/app/*"],
+      "#constants": ["./src/constants/index"],
       "#layouts": ["./src/layouts/index"],
       "#lib": ["./src/lib/index"],
       "#utils": ["./src/utils/index"],
