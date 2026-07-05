@@ -1,7 +1,17 @@
-import { BehaviorSubject, forkJoin, map, shareReplay, switchMap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  forkJoin,
+  map,
+  of,
+  shareReplay,
+  startWith,
+  switchMap,
+} from 'rxjs';
 import { pokeService } from '#service';
 import type { PokemonData } from '#service/types';
 import type { DeckSetup } from './poke-memory-game-store-types';
+import { RESPONSE_STATUS } from '#types';
 
 class PokeMemoryGameStore {
   deckSetup$ = new BehaviorSubject<DeckSetup>({
@@ -26,6 +36,21 @@ class PokeMemoryGameStore {
 
             return forkJoin(request);
           }),
+          map((response) => ({
+            status: RESPONSE_STATUS.success,
+            results: response,
+          })),
+          startWith({
+            status: RESPONSE_STATUS.loading,
+            results: [],
+          }),
+          catchError((error) =>
+            of({
+              status: RESPONSE_STATUS.error,
+              results: [],
+              error,
+            }),
+          ),
         ),
     ),
     shareReplay(),
