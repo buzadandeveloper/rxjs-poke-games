@@ -1,15 +1,10 @@
-import { useObservableState } from 'observable-hooks';
-import { pokeMemoryGameStore } from '#stores';
-import { SelectDeck } from './components';
+import { DeckList, SelectDeck } from './components';
 
 export const PokeMemoryGamePage = () => {
-  const game = useObservableState(pokeMemoryGameStore.pokemons$, null);
-
-  console.log(game);
-
   return (
-    <div>
+    <div className="flex flex-col gap-4 items-center h-full">
       <SelectDeck />
+      <DeckList />
     </div>
   );
 };
