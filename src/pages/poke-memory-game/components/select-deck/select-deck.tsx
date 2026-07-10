@@ -4,10 +4,10 @@ import { pokeMemoryGameStore } from '#stores';
 const COMBINATIONS = [2, 3, 4, 5];
 
 export const SelectDeck = () => {
-  const deckSetup = pokeMemoryGameStore.deckSetup$.getValue();
+  const deckSetup = pokeMemoryGameStore.deckSetup$.value;
 
   return (
-    <div className="flex items-center justify-center gap-4">
+    <div className="flex gap-4">
       <Select
         label="Characters:"
         defaultValue={deckSetup.items}
@@ -15,7 +15,6 @@ export const SelectDeck = () => {
         onChange={(e) =>
           pokeMemoryGameStore.selectDeck({
             items: Number(e.target.value),
-            groups: deckSetup.groups,
           })
         }
       />
@@ -25,7 +24,6 @@ export const SelectDeck = () => {
         options={COMBINATIONS}
         onChange={(e) =>
           pokeMemoryGameStore.selectDeck({
-            items: deckSetup.items,
             groups: Number(e.target.value),
           })
         }

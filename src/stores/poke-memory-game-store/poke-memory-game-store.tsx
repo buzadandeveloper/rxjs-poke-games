@@ -1,6 +1,7 @@
 import {
   BehaviorSubject,
   catchError,
+  distinctUntilChanged,
   forkJoin,
   map,
   of,
@@ -20,6 +21,7 @@ class PokeMemoryGameStore {
   });
 
   pokemons$ = this.deckSetup$.pipe(
+    distinctUntilChanged((prev, curr) => prev.items === curr.items),
     switchMap(({ items }) =>
       pokeService
         .getPokemons({
@@ -68,10 +70,10 @@ class PokeMemoryGameStore {
     };
   }
 
-  selectDeck({ items, groups }: DeckSetup) {
+  selectDeck(updates: Partial<DeckSetup>) {
     return this.deckSetup$.next({
-      items,
-      groups,
+      ...this.deckSetup$.value,
+      ...updates,
     });
   }
 }
