@@ -14,7 +14,7 @@ export const Header = () => {
             to={route.path}
             key={index}
             className={({ isActive }) =>
-              cn('btn btn-primary btn-outline', { 'btn-active': isActive })
+              cn('btn btn-primary btn-outline', { 'btn-active text-white': isActive })
             }
             viewTransition
           >
