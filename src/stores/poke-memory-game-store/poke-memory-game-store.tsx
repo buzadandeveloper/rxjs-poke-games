@@ -1,6 +1,7 @@
 import {
   BehaviorSubject,
   catchError,
+  combineLatest,
   distinctUntilChanged,
   forkJoin,
   map,
@@ -11,8 +12,10 @@ import {
 } from 'rxjs';
 import { pokeService } from '#service';
 import type { PokemonData } from '#service/types';
-import type { DeckSetup } from './poke-memory-game-store-types';
+import type { DeckSetup, PokemonMap } from './poke-memory-game-store-types';
 import { RESPONSE_STATUS } from '#types';
+import { shuffle } from '#utils';
+import { MAX_REACHABLE_POKEMONS } from '#constants';
 
 class PokeMemoryGameStore {
   deckSetup$ = new BehaviorSubject<DeckSetup>({
@@ -58,11 +61,26 @@ class PokeMemoryGameStore {
     shareReplay(),
   );
 
+  shuffledPokemons$ = combineLatest([this.pokemons$, this.deckSetup$]).pipe(
+    map(([pokemons, deckSetups]) => {
+      let deck: PokemonMap[] = [];
+
+      for (let i = 0; i < deckSetups.groups; i++) deck = [...deck, ...pokemons.results];
+
+      const shuffledDeck = shuffle<PokemonMap>(deck);
+
+      return {
+        ...pokemons,
+        results: shuffledDeck,
+      };
+    }),
+  );
+
   #randomOffset() {
-    return Math.floor(Math.random() * 600) + 1;
+    return Math.floor(Math.random() * MAX_REACHABLE_POKEMONS) + 1;
   }
 
-  #mapPokemon(response: PokemonData) {
+  #mapPokemon(response: PokemonData): PokemonMap {
     return {
       id: response.id,
       name: response.name,

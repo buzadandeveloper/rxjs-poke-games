@@ -4,11 +4,13 @@ import { DeckCard } from './deck-card';
 import { getRequestStatus } from '#utils';
 
 export const DeckList = () => {
-  const pokemons = useObservableState(pokeMemoryGameStore.pokemons$, null);
+  const pokemons = useObservableState(pokeMemoryGameStore.shuffledPokemons$, null);
 
   const { isLoading } = getRequestStatus(pokemons?.status);
 
-  console.log(pokemons);
+  // const pok = pokemons?.results || []
+
+  // console.log(shuffle(pok));
 
   if (isLoading) return <div>Loading...</div>;
 
