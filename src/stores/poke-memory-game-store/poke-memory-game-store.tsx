@@ -12,24 +12,29 @@ import {
 } from 'rxjs';
 import { pokeService } from '#service';
 import type { PokemonData } from '#service/types';
-import type { DeckSetup, PokemonMap } from './poke-memory-game-store-types';
+import type { DeckSetup, GameState, PokemonMap } from './poke-memory-game-store-types';
 import { RESPONSE_STATUS } from '#types';
 import { shuffle } from '#utils';
 import { MAX_REACHABLE_POKEMONS } from '#constants';
 
 class PokeMemoryGameStore {
-  deckSetup$ = new BehaviorSubject<DeckSetup>({
-    items: 2,
-    groups: 2,
+  gameState$ = new BehaviorSubject<GameState>({
+    status: RESPONSE_STATUS.idle,
+    selectedPokemons: [],
+    deckSetup: {
+      items: 2,
+      groups: 2,
+    },
+    deck: [],
   });
 
-  pokemons$ = this.deckSetup$.pipe(
-    distinctUntilChanged((prev, curr) => prev.items === curr.items),
-    switchMap(({ items }) =>
+  pokemons$ = this.gameState$.pipe(
+    distinctUntilChanged((prev, curr) => prev.deckSetup.items === curr.deckSetup.items),
+    switchMap((gameLogic) =>
       pokeService
         .getPokemons({
           offset: this.#randomOffset(),
-          limit: items,
+          limit: gameLogic.deckSetup.items,
         })
         .pipe(
           switchMap(({ response }) => {
@@ -61,17 +66,15 @@ class PokeMemoryGameStore {
     shareReplay(),
   );
 
-  shuffledPokemons$ = combineLatest([this.pokemons$, this.deckSetup$]).pipe(
-    map(([pokemons, deckSetups]) => {
+  gameLogic$ = combineLatest([this.gameState$, this.pokemons$]).pipe(
+    map(([gameState, pokemons]) => {
       let deck: PokemonMap[] = [];
-
-      for (let i = 0; i < deckSetups.groups; i++) deck = [...deck, ...pokemons.results];
-
-      const shuffledDeck = shuffle<PokemonMap>(deck);
+      for (let i = 0; i < gameState.deckSetup.groups; i++) deck = [...deck, ...pokemons.results];
 
       return {
-        ...pokemons,
-        results: shuffledDeck,
+        ...gameState,
+        status: pokemons.status,
+        deck: shuffle(deck),
       };
     }),
   );
@@ -89,10 +92,17 @@ class PokeMemoryGameStore {
   }
 
   selectDeck(updates: Partial<DeckSetup>) {
-    return this.deckSetup$.next({
-      ...this.deckSetup$.value,
-      ...updates,
+    return this.gameState$.next({
+      ...this.gameState$.value,
+      deckSetup: {
+        ...this.gameState$.value.deckSetup,
+        ...updates,
+      },
     });
+  }
+
+  selectMatch(index: number, pokemon: PokemonMap) {
+    console.log('selectMatch', index, pokemon);
   }
 }
 

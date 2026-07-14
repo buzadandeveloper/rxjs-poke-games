@@ -4,20 +4,25 @@ import { DeckCard } from './deck-card';
 import { getRequestStatus } from '#utils';
 
 export const DeckList = () => {
-  const pokemons = useObservableState(pokeMemoryGameStore.shuffledPokemons$, null);
+  const gameLogic = useObservableState(pokeMemoryGameStore.gameLogic$, null);
 
-  const { isLoading } = getRequestStatus(pokemons?.status);
+  const { isLoading } = getRequestStatus(gameLogic?.status);
 
   // const pok = pokemons?.results || []
 
-  // console.log(shuffle(pok));
+  console.log(gameLogic);
 
   if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className="flex gap-4">
-      {pokemons?.results.map((pokemon, index) => (
-        <DeckCard key={index} src={pokemon.src} />
+      {gameLogic?.deck.map((pokemon, index) => (
+        <DeckCard
+          key={index}
+          name={pokemon.name}
+          src={pokemon.src}
+          onSelectCard={() => pokeMemoryGameStore.selectMatch(index, pokemon)}
+        />
       ))}
     </div>
   );

@@ -4,7 +4,7 @@ import { pokeMemoryGameStore } from '#stores';
 const COMBINATIONS = [2, 3, 4, 5];
 
 export const SelectDeck = () => {
-  const deckSetup = pokeMemoryGameStore.deckSetup$.value;
+  const deckSetup = pokeMemoryGameStore.gameState$.value.deckSetup;
 
   return (
     <div className="flex gap-4">
