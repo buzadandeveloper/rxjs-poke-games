@@ -30,11 +30,11 @@ class PokeMemoryGameStore {
 
   pokemons$ = this.gameState$.pipe(
     distinctUntilChanged((prev, curr) => prev.deckSetup.items === curr.deckSetup.items),
-    switchMap((gameLogic) =>
+    switchMap((gameState) =>
       pokeService
         .getPokemons({
           offset: this.#randomOffset(),
-          limit: gameLogic.deckSetup.items,
+          limit: gameState.deckSetup.items,
         })
         .pipe(
           switchMap(({ response }) => {
