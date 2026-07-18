@@ -18,17 +18,18 @@ import { shuffle } from '#utils';
 import { MAX_REACHABLE_POKEMONS } from '#constants';
 
 class PokeMemoryGameStore {
-  gameState$ = new BehaviorSubject<GameState>({
+  initialGameState$ = new BehaviorSubject<GameState>({
     status: RESPONSE_STATUS.idle,
-    selectedPokemons: [],
+    flippedPokemons: [],
     deckSetup: {
       items: 2,
       groups: 2,
     },
+    pokemons: [],
     deck: [],
   });
 
-  pokemons$ = this.gameState$.pipe(
+  pokemons$ = this.initialGameState$.pipe(
     distinctUntilChanged((prev, curr) => prev.deckSetup.items === curr.deckSetup.items),
     switchMap((gameState) =>
       pokeService
@@ -46,10 +47,18 @@ class PokeMemoryGameStore {
 
             return forkJoin(request);
           }),
-          map((response) => ({
-            status: RESPONSE_STATUS.success,
-            results: response,
-          })),
+          map((response) => {
+            this.initialGameState$.next({
+              ...this.initialGameState$.value,
+              pokemons: response,
+              deck: this.#createDeck(response, this.initialGameState$.value.deckSetup.groups),
+            });
+
+            return {
+              status: RESPONSE_STATUS.success,
+              results: response,
+            };
+          }),
           startWith({
             status: RESPONSE_STATUS.loading,
             results: [],
@@ -66,43 +75,63 @@ class PokeMemoryGameStore {
     shareReplay(),
   );
 
-  gameLogic$ = combineLatest([this.gameState$, this.pokemons$]).pipe(
+  gameState$ = combineLatest([this.initialGameState$, this.pokemons$]).pipe(
     map(([gameState, pokemons]) => {
-      let deck: PokemonMap[] = [];
-      for (let i = 0; i < gameState.deckSetup.groups; i++) deck = [...deck, ...pokemons.results];
-
       return {
         ...gameState,
         status: pokemons.status,
-        deck: shuffle(deck),
       };
     }),
   );
+
+  #createDeck(results: PokemonMap[], groups: number) {
+    let deck: PokemonMap[] = [];
+
+    for (let i = 0; i < groups; i++) deck = [...deck, ...results];
+
+    return shuffle(deck);
+  }
 
   #randomOffset() {
     return Math.floor(Math.random() * MAX_REACHABLE_POKEMONS) + 1;
   }
 
   #mapPokemon(response: PokemonData): PokemonMap {
+    const img = new Image();
+    img.src = response.sprites.other.home.front_default;
+
     return {
       id: response.id,
       name: response.name,
-      src: response.sprites.other.home.front_default,
+      src: img.src,
+      isFlipped: false,
+      isMatched: false,
     };
   }
 
   selectDeck(updates: Partial<DeckSetup>) {
-    return this.gameState$.next({
-      ...this.gameState$.value,
+    const deck = updates.groups
+      ? this.#createDeck(this.initialGameState$.value.pokemons, updates.groups)
+      : this.initialGameState$.value.deck;
+
+    return this.initialGameState$.next({
+      ...this.initialGameState$.value,
       deckSetup: {
-        ...this.gameState$.value.deckSetup,
+        ...this.initialGameState$.value.deckSetup,
         ...updates,
       },
+      deck,
     });
   }
 
-  selectMatch(index: number, pokemon: PokemonMap) {
-    console.log('selectMatch', index, pokemon);
+  selectMatch(index: number) {
+    this.initialGameState$.next({
+      ...this.initialGameState$.value,
+      deck: this.initialGameState$.value.deck.map((poke, idx) => ({
+        ...poke,
+        isFlipped: index === idx || poke.isFlipped,
+      })),
+    });
   }
 }
 

@@ -4,11 +4,9 @@ import { DeckCard } from './deck-card';
 import { getRequestStatus } from '#utils';
 
 export const DeckList = () => {
-  const gameLogic = useObservableState(pokeMemoryGameStore.gameLogic$, null);
+  const gameLogic = useObservableState(pokeMemoryGameStore.gameState$, null);
 
   const { isLoading } = getRequestStatus(gameLogic?.status);
-
-  // const pok = pokemons?.results || []
 
   console.log(gameLogic);
 
@@ -21,7 +19,8 @@ export const DeckList = () => {
           key={index}
           name={pokemon.name}
           src={pokemon.src}
-          onSelectCard={() => pokeMemoryGameStore.selectMatch(index, pokemon)}
+          isFlipped={pokemon.isFlipped}
+          onSelectCard={() => pokeMemoryGameStore.selectMatch(index)}
         />
       ))}
     </div>
