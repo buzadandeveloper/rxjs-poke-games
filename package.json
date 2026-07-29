@@ -62,6 +62,7 @@
   },
   "imports": {
     "#app/*": "./src/app/*",
+    "#components": "./src/components/index",
     "#constants": "./src/constants/index",
     "#layouts": "./src/layouts/index",
     "#lib": "./src/lib/index",
@@ -71,6 +72,6 @@
     "#service": "./src/service/index",
     "#stores/*": "./src/stores/*",
     "#stores": "./src/stores/index",
-    "#types": "./src/types/index.ts"
+    "#types": "./src/types/index"
   }
 }
