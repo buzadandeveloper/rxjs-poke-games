@@ -4,7 +4,6 @@ import { DeckCard } from './deck-card';
 import { getRequestStatus } from '#utils';
 import { cn } from '#lib';
 import { PageLoader } from '#components';
-import { GameScore } from './game-score';
 
 export const DeckList = () => {
   const gameState = useObservableState(pokeMemoryGameStore.gameState$, null);
@@ -17,7 +16,6 @@ export const DeckList = () => {
 
   return (
     <div className="flex flex-col gap-4 items-center">
-      <GameScore turns={gameState?.turns || 0} bestTurns={gameState?.bestTurns || 0} />
       <div
         className={cn('grid gap-4', isEven ? 'grid-cols-2' : 'max-sm:grid-cols-2 grid-cols-3 pb-4')}
       >
