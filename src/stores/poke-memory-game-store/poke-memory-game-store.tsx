@@ -17,17 +17,21 @@ import { RESPONSE_STATUS } from '#types';
 import { shuffle } from '#utils';
 import { MAX_REACHABLE_POKEMONS } from '#constants';
 
+const INITIAL_STATE = {
+  status: RESPONSE_STATUS.idle,
+  flippedPokemons: [],
+  deckSetup: {
+    items: 2,
+    groups: 2,
+  },
+  pokemons: [],
+  deck: [],
+  matchedPokemons: [],
+  gameOver: false,
+};
+
 class PokeMemoryGameStore {
-  initialGameState$ = new BehaviorSubject<GameState>({
-    status: RESPONSE_STATUS.idle,
-    flippedPokemons: [],
-    deckSetup: {
-      items: 2,
-      groups: 2,
-    },
-    pokemons: [],
-    deck: [],
-  });
+  initialGameState$ = new BehaviorSubject<GameState>(INITIAL_STATE);
 
   pokemons$ = this.initialGameState$.pipe(
     distinctUntilChanged((prev, curr) => prev.deckSetup.items === curr.deckSetup.items),
@@ -110,28 +114,76 @@ class PokeMemoryGameStore {
   }
 
   selectDeck(updates: Partial<DeckSetup>) {
-    const deck = updates.groups
-      ? this.#createDeck(this.initialGameState$.value.pokemons, updates.groups)
-      : this.initialGameState$.value.deck;
+    const state = this.initialGameState$.value;
+
+    const deck = updates.groups ? this.#createDeck(state.pokemons, updates.groups) : state.deck;
 
     return this.initialGameState$.next({
-      ...this.initialGameState$.value,
+      ...INITIAL_STATE,
       deckSetup: {
-        ...this.initialGameState$.value.deckSetup,
+        ...state.deckSetup,
         ...updates,
       },
+      pokemons: state.pokemons,
       deck,
     });
   }
 
-  selectMatch(index: number) {
-    this.initialGameState$.next({
-      ...this.initialGameState$.value,
-      deck: this.initialGameState$.value.deck.map((poke, idx) => ({
-        ...poke,
-        isFlipped: index === idx || poke.isFlipped,
-      })),
-    });
+  flipCard(index: number) {
+    const state = this.initialGameState$.value;
+
+    if (state.deck[index].isFlipped) return;
+
+    const deck = [...state.deck];
+
+    deck[index] = {
+      ...deck[index],
+      isFlipped: true,
+    };
+
+    const flippedPokemons = [...state.flippedPokemons, deck[index]];
+
+    if (flippedPokemons.length <= state.deckSetup.groups) {
+      this.initialGameState$.next({
+        ...state,
+        flippedPokemons,
+        deck,
+      });
+    }
+
+    if (flippedPokemons.length === state.deckSetup.groups) {
+      const isMatch = flippedPokemons.every((pokemon) => pokemon.id === flippedPokemons[0].id);
+
+      if (isMatch) {
+        const deckMatched = flippedPokemons.map((pokemon) => ({
+          ...pokemon,
+          isMatched: true,
+        }));
+        const updatedMatchedDeck = deck.map((pokemon) => {
+          const matchedPokemon = deckMatched.find((matched) => matched.id === pokemon.id);
+          return matchedPokemon ? matchedPokemon : pokemon;
+        });
+
+        this.initialGameState$.next({
+          ...state,
+          flippedPokemons: [],
+          matchedPokemons: [...state.matchedPokemons, ...deckMatched],
+          deck: updatedMatchedDeck,
+          gameOver: state.matchedPokemons.length === state.pokemons.length,
+        });
+      } else {
+        setTimeout(() => {
+          this.initialGameState$.next({
+            ...state,
+            flippedPokemons: [],
+            deck: deck.map((pokemon) => ({
+              ...pokemon,
+              isFlipped: false,
+            })),
+          });
+        }, 1000);
+      }
+    }
   }
 }
 

@@ -1,5 +1,4 @@
 import type { ResponseStatus } from '#types';
-import type { PokemonData } from '#service/types';
 
 export type DeckSetup = {
   items: number;
@@ -19,5 +18,7 @@ export type GameState = {
   status: ResponseStatus;
   deck: PokemonMap[];
   pokemons: PokemonMap[];
-  flippedPokemons: PokemonData[];
+  flippedPokemons: PokemonMap[];
+  matchedPokemons: PokemonMap[];
+  gameOver: boolean;
 };

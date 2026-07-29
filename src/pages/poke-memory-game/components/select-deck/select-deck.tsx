@@ -1,7 +1,7 @@
 import { Select } from './select';
 import { pokeMemoryGameStore } from '#stores';
 
-const COMBINATIONS = [2, 3, 4, 5];
+const COMBINATIONS = [2, 3];
 
 export const SelectDeck = () => {
   const deckSetup = pokeMemoryGameStore.initialGameState$.value.deckSetup;
