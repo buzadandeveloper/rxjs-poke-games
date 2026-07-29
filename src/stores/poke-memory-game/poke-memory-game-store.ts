@@ -229,8 +229,8 @@ class PokeMemoryGameStore {
 
     this.initialGameState$.next({
       ...state,
-      flippedPokemons: [],
       deck: state.deck.map((pokemon) => ({ ...pokemon, isFlipped: false })),
+      isGameOver: false,
     });
 
     setTimeout(() => {
