@@ -10,11 +10,11 @@ export const SelectDeck = () => {
     <div className="flex gap-4">
       <Select
         label="Characters:"
-        defaultValue={deckSetup.items}
+        defaultValue={deckSetup.characters}
         options={COMBINATIONS}
         onChange={(e) =>
           pokeMemoryGameStore.selectDeck({
-            items: Number(e.target.value),
+            characters: Number(e.target.value),
           })
         }
       />

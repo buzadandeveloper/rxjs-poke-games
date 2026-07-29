@@ -1,7 +1,7 @@
 import type { ResponseStatus } from '#types';
 
 export type DeckSetup = {
-  items: number;
+  characters: number;
   groups: number;
 };
 
@@ -20,5 +20,7 @@ export type GameState = {
   pokemons: PokemonMap[];
   flippedPokemons: PokemonMap[];
   matchedPokemons: PokemonMap[];
-  gameOver: boolean;
+  turns: number;
+  bestTurns: number;
+  isGameOver: boolean;
 };

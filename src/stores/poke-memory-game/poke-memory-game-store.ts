@@ -14,32 +14,38 @@ import { pokeService } from '#service';
 import type { PokemonData } from '#service/types';
 import type { DeckSetup, GameState, PokemonMap } from './poke-memory-game-store-types';
 import { RESPONSE_STATUS } from '#types';
-import { shuffle } from '#utils';
+import { loadBestTurns, saveBestTurns, shuffle } from '#utils';
 import { MAX_REACHABLE_POKEMONS } from '#constants';
+
+const CARD_FLIP_DURATION = 700;
+
+const DEFAULT_DECK_SETUP = {
+  characters: 2,
+  groups: 2,
+};
 
 const INITIAL_STATE = {
   status: RESPONSE_STATUS.idle,
   flippedPokemons: [],
-  deckSetup: {
-    items: 2,
-    groups: 2,
-  },
+  deckSetup: DEFAULT_DECK_SETUP,
   pokemons: [],
   deck: [],
   matchedPokemons: [],
-  gameOver: false,
+  turns: 0,
+  bestTurns: loadBestTurns(DEFAULT_DECK_SETUP.characters, DEFAULT_DECK_SETUP.groups),
+  isGameOver: false,
 };
 
 class PokeMemoryGameStore {
   initialGameState$ = new BehaviorSubject<GameState>(INITIAL_STATE);
 
   pokemons$ = this.initialGameState$.pipe(
-    distinctUntilChanged((prev, curr) => prev.deckSetup.items === curr.deckSetup.items),
+    distinctUntilChanged((prev, curr) => prev.deckSetup.characters === curr.deckSetup.characters),
     switchMap((gameState) =>
       pokeService
         .getPokemons({
           offset: this.#randomOffset(),
-          limit: gameState.deckSetup.items,
+          limit: gameState.deckSetup.characters,
         })
         .pipe(
           switchMap(({ response }) => {
@@ -116,23 +122,40 @@ class PokeMemoryGameStore {
   selectDeck(updates: Partial<DeckSetup>) {
     const state = this.initialGameState$.value;
 
-    const deck = updates.groups ? this.#createDeck(state.pokemons, updates.groups) : state.deck;
+    if (state.isGameOver) return;
 
-    return this.initialGameState$.next({
-      ...INITIAL_STATE,
-      deckSetup: {
+    this.initialGameState$.next({
+      ...state,
+      flippedPokemons: [],
+      deck: state.deck.map((pokemon) => ({ ...pokemon, isFlipped: false })),
+    });
+
+    setTimeout(() => {
+      const deck = updates.characters
+        ? []
+        : updates.groups
+          ? this.#createDeck(state.pokemons, updates.groups)
+          : state.deck;
+
+      const deckSetup = {
         ...state.deckSetup,
         ...updates,
-      },
-      pokemons: state.pokemons,
-      deck,
-    });
+      };
+
+      this.initialGameState$.next({
+        ...INITIAL_STATE,
+        deckSetup,
+        pokemons: state.pokemons,
+        deck,
+        bestTurns: loadBestTurns(deckSetup.characters, deckSetup.groups),
+      });
+    }, CARD_FLIP_DURATION);
   }
 
   flipCard(index: number) {
     const state = this.initialGameState$.value;
 
-    if (state.deck[index].isFlipped) return;
+    if (state.isGameOver || state.deck[index].isFlipped) return;
 
     const deck = [...state.deck];
 
@@ -143,11 +166,14 @@ class PokeMemoryGameStore {
 
     const flippedPokemons = [...state.flippedPokemons, deck[index]];
 
+    const turns = state.turns + 1;
+
     if (flippedPokemons.length <= state.deckSetup.groups) {
       this.initialGameState$.next({
         ...state,
         flippedPokemons,
         deck,
+        turns,
       });
     }
 
@@ -163,27 +189,59 @@ class PokeMemoryGameStore {
           const matchedPokemon = deckMatched.find((matched) => matched.id === pokemon.id);
           return matchedPokemon ? matchedPokemon : pokemon;
         });
+        const isGameOver = updatedMatchedDeck.every((pokemon) => pokemon.isMatched);
+
+        if (isGameOver) {
+          const bestTurns =
+            state.bestTurns === 0 || turns < state.bestTurns ? turns : state.bestTurns;
+          saveBestTurns(state.deckSetup.characters, state.deckSetup.groups, bestTurns);
+        }
 
         this.initialGameState$.next({
           ...state,
           flippedPokemons: [],
           matchedPokemons: [...state.matchedPokemons, ...deckMatched],
           deck: updatedMatchedDeck,
-          gameOver: state.matchedPokemons.length === state.pokemons.length,
+          turns,
+          bestTurns: loadBestTurns(state.deckSetup.characters, state.deckSetup.groups),
+          isGameOver,
         });
       } else {
+        const revertDeck = deck.map((pokemon) => {
+          const flippedPokemon = flippedPokemons.find((flipped) => flipped.id === pokemon.id);
+          return flippedPokemon ? { ...pokemon, isFlipped: false } : pokemon;
+        });
+
         setTimeout(() => {
           this.initialGameState$.next({
             ...state,
             flippedPokemons: [],
-            deck: deck.map((pokemon) => ({
-              ...pokemon,
-              isFlipped: false,
-            })),
+            deck: revertDeck,
+            turns,
           });
         }, 1000);
       }
     }
+  }
+
+  newGame() {
+    const state = this.initialGameState$.value;
+
+    this.initialGameState$.next({
+      ...state,
+      flippedPokemons: [],
+      deck: state.deck.map((pokemon) => ({ ...pokemon, isFlipped: false })),
+    });
+
+    setTimeout(() => {
+      this.initialGameState$.next({
+        ...INITIAL_STATE,
+        deckSetup: state.deckSetup,
+        pokemons: state.pokemons,
+        deck: this.#createDeck(state.pokemons, state.deckSetup.groups),
+        bestTurns: loadBestTurns(state.deckSetup.characters, state.deckSetup.groups),
+      });
+    }, CARD_FLIP_DURATION);
   }
 }
 
