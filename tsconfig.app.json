@@ -32,7 +32,7 @@
       "#pages": ["./src/pages/index"],
       "#service/*": ["./src/service/*"],
       "#service": ["./src/service/index"],
-      "#stores/*=": ["./src/stores/*"],
+      "#stores/*": ["./src/stores/*"],
       "#stores": ["./src/stores/index"],
       "#types": ["./src/types/index"]
     },
