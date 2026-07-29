@@ -23,6 +23,7 @@
     ]
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "commitlint": "^21.0.2",
     "concurrently": "^10.0.3",
     "lint-staged": "^17.0.7",
@@ -30,7 +31,8 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-router": "^8.0.1",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
@@ -60,14 +62,16 @@
   },
   "imports": {
     "#app/*": "./src/app/*",
+    "#components": "./src/components/index",
+    "#constants": "./src/constants/index",
     "#layouts": "./src/layouts/index",
-    "#lib/*": "./src/lib/*",
+    "#lib": "./src/lib/index",
     "#utils": "./src/utils/index",
     "#pages": "./src/pages/index",
     "#service/*": "./src/service/*",
     "#service": "./src/service/index",
     "#stores/*": "./src/stores/*",
     "#stores": "./src/stores/index",
-    "#types": "./src/types/index.ts"
+    "#types": "./src/types/index"
   }
 }

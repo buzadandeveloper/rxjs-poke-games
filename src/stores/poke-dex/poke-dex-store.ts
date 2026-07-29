@@ -14,9 +14,9 @@ import {
 import type { PokemonData, PokemonsParams, PokemonStatName } from '#service/types';
 import type { Pokemon, PokemonsState } from './poke-dex-store-types';
 import { RESPONSE_STATUS } from '#types';
+import { MAX_REACHABLE_POKEMONS } from '#constants';
 
 const POKEMONS_LIMIT = 20;
-const MAX_REACHABLE_POKEMONS = 600;
 
 class PokeDexStore {
   #params$: BehaviorSubject<PokemonsParams> = new BehaviorSubject({

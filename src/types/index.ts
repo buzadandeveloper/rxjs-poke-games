@@ -1,4 +1,5 @@
 export const RESPONSE_STATUS = {
+  idle: 'idle',
   loading: 'loading',
   pending: 'pending',
   success: 'success',

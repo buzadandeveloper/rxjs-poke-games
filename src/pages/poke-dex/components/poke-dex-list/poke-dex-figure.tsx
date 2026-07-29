@@ -5,7 +5,7 @@ interface PokeDexFigureProps {
 
 export const PokeDexFigure = ({ name, src }: PokeDexFigureProps) => {
   return (
-    <figure className="bg-base-200 py-2 px-4">
+    <figure className="bg-linear-to-b from-(--color-primary) to-white py-2 px-4">
       <img
         src={src}
         alt={name}
