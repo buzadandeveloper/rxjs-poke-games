@@ -20,6 +20,10 @@ export const router = createBrowserRouter([
         path: ROUTES.POKE_MEMORY_GAME,
         element: <PokeMemoryGamePage />,
       },
+      {
+        path: '*',
+        element: <HomePage />,
+      },
     ],
   },
 ]);
