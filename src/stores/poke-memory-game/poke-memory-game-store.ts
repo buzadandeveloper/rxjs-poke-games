@@ -230,7 +230,6 @@ class PokeMemoryGameStore {
     this.initialGameState$.next({
       ...state,
       deck: state.deck.map((pokemon) => ({ ...pokemon, isFlipped: false })),
-      isGameOver: false,
     });
 
     setTimeout(() => {
@@ -240,6 +239,7 @@ class PokeMemoryGameStore {
         pokemons: state.pokemons,
         deck: this.#createDeck(state.pokemons, state.deckSetup.groups),
         bestTurns: loadBestTurns(state.deckSetup.characters, state.deckSetup.groups),
+        isGameOver: false,
       });
     }, CARD_FLIP_DURATION);
   }
