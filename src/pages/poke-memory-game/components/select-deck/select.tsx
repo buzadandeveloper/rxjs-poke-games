@@ -10,7 +10,7 @@ export const Select = ({ label, defaultValue, options, onChange }: SelectProps) 
     <div className="flex items-center gap-4">
       {label && <label className="text-sm">{label}</label>}
       <select
-        className="select select-sm outline-none"
+        className="select select-sm outline-none w-[50px]"
         defaultValue={defaultValue}
         onChange={onChange}
       >
