@@ -2,15 +2,17 @@ interface SelectProps {
   label?: string;
   defaultValue: number;
   options: number[];
+  disabled?: boolean;
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-export const Select = ({ label, defaultValue, options, onChange }: SelectProps) => {
+export const Select = ({ label, defaultValue, options, disabled, onChange }: SelectProps) => {
   return (
     <div className="flex items-center gap-4">
       {label && <label className="text-sm">{label}</label>}
       <select
         className="select select-sm outline-none w-[50px]"
+        disabled={disabled}
         defaultValue={defaultValue}
         onChange={onChange}
       >

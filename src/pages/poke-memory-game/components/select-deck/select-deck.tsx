@@ -3,7 +3,11 @@ import { pokeMemoryGameStore } from '#stores';
 
 const COMBINATIONS = [2, 3];
 
-export const SelectDeck = () => {
+interface SelectDeckProps {
+  isLoading: boolean;
+}
+
+export const SelectDeck = ({ isLoading }: SelectDeckProps) => {
   const deckSetup = pokeMemoryGameStore.initialGameState$.value.deckSetup;
 
   return (
@@ -12,6 +16,7 @@ export const SelectDeck = () => {
         label="Characters:"
         defaultValue={deckSetup.characters}
         options={COMBINATIONS}
+        disabled={isLoading}
         onChange={(e) =>
           pokeMemoryGameStore.selectDeck({
             characters: Number(e.target.value),
@@ -22,6 +27,7 @@ export const SelectDeck = () => {
         label="Groups:"
         defaultValue={deckSetup.groups}
         options={COMBINATIONS}
+        disabled={isLoading}
         onChange={(e) =>
           pokeMemoryGameStore.selectDeck({
             groups: Number(e.target.value),

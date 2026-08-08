@@ -1,16 +1,16 @@
 import { pokeMemoryGameStore } from '#stores';
-import { useObservableState } from 'observable-hooks';
 import { DeckCard } from './deck-card';
-import { getRequestStatus } from '#utils';
 import { cn } from '#lib';
 import { PageLoader } from '#components';
+import type { PokemonMap } from '#stores/poke-memory-game/poke-memory-game-store-types';
 
-export const DeckList = () => {
-  const gameState = useObservableState(pokeMemoryGameStore.gameState$, null);
+interface DeckListProps {
+  deck: PokemonMap[];
+  isLoading: boolean;
+}
 
-  const { isLoading } = getRequestStatus(gameState?.status);
-
-  const isEven = (gameState?.deck || []).length % 2 === 0;
+export const DeckList = ({ deck, isLoading }: DeckListProps) => {
+  const isEven = (deck || []).length % 2 === 0;
 
   if (isLoading) return <PageLoader />;
 
@@ -19,7 +19,7 @@ export const DeckList = () => {
       <div
         className={cn('grid gap-4', isEven ? 'grid-cols-2' : 'max-sm:grid-cols-2 grid-cols-3 pb-4')}
       >
-        {gameState?.deck.map((pokemon, index) => (
+        {deck.map((pokemon, index) => (
           <DeckCard
             key={index}
             name={pokemon.name}
