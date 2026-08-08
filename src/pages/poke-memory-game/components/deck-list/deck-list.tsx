@@ -10,7 +10,7 @@ interface DeckListProps {
 }
 
 export const DeckList = ({ deck, isLoading }: DeckListProps) => {
-  const isEven = (deck || []).length % 2 === 0;
+  const isEven = deck.length % 2 === 0;
 
   if (isLoading) return <PageLoader />;
 
