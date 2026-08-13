@@ -11,10 +11,7 @@ pre-commit:
       stage_fixed: true
     tsc:
       glob: 'src/**/*.{ts,tsx}'
-      run: bunx typecheck
-    madge:
-      glob: "src/**/*.{ts,tsx}"
-      run: bunx check-circular
+      run: bunx type:check
 
 commit-msg:
   commands:
