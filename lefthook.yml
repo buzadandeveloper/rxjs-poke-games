@@ -11,7 +11,7 @@ pre-commit:
       stage_fixed: true
     tsc:
       glob: 'src/**/*.{ts,tsx}'
-      run: bunx type:check
+      run: bun run type:check
 
 commit-msg:
   commands:

@@ -15,7 +15,7 @@ class ApiClient {
     return ApiClient.#instance;
   }
 
-  get<T = any>(endpoint: string, queryParams?: Record<string, any>): Observable<AjaxResponse<T>> {
+  get<T>(endpoint: string, queryParams?: Record<string, any>): Observable<AjaxResponse<T>> {
     return ajax<T>({
       url: `${this.#url}/${endpoint}`,
       method: 'GET',
